@@ -8,6 +8,7 @@ This project is meant to demonstrate the capabilities of the MySQL in conjunctio
 ## Credits
 
 Credit to the teachers and TA staff and UNC for the knowledge provided via the bootcamp.  
+Credit to Xandromous for providing the starter code found at the fantastic-umbrella repo.
 
 ## License
 This was created using the MIT License for educational purposes only.  
