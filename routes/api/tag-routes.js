@@ -40,9 +40,9 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   // create a new tag
   try {
-    const newTagData = await Tag.create({
+    const tagData = await Tag.create({
     });
-    res.status(200).json(newTagData);
+    res.status(200).json(tagData);
   } catch (err) {
     res.status(400).json(err);
   }
@@ -86,7 +86,7 @@ router.delete('/:id', async (req, res) => {
       return;
     }
 
-    res.status(200).json(categData);
+    res.status(200).json(tagData);
   } catch (err) {
     res.status(500).json(err);
   }
