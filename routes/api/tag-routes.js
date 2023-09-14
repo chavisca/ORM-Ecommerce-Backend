@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const sequelize = require('../../config/connection');
 const { Tag, Product, ProductTag } = require('../../models');
 
 // The `/api/tags` endpoint
@@ -8,10 +9,11 @@ router.get('/', async(req, res) => {
   // be sure to include its associated Product data
   try {
     const tagData = await Tag.findAll({
-      include: [{ model: Product}],
-      include: [{ model: ProductTag}],
+      include: [
+        { model: Product},
+      ],
     });
-    res.status(200).json(categData);
+    res.status(200).json(tagData);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -22,8 +24,9 @@ router.get('/:id', async (req, res) => {
   // be sure to include its associated Product data
   try {
     const tagData = await Tag.findByPk(req.params.id, {
-      include: [{ model: Product }],
-      include: [{ model: ProductTag}],
+      include: [
+        { model: Product },
+      ],
     });
 
     if (!tagData) {
@@ -40,8 +43,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   // create a new tag
   try {
-    const tagData = await Tag.create({
-    });
+    const tagData = await Tag.create(req.body);
     res.status(200).json(tagData);
   } catch (err) {
     res.status(400).json(err);
@@ -50,26 +52,18 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', (req, res) => {
   // update a tag's name by its `id` value
-  Tag.update(
-    {
-      // All the fields you can update and the data attached to the request body.
-      id: req.body.id,
-      tag_name: req.body.tag_name,
+  Tag.update(req.body, {
+    where: {
+      id: req.params.id,
     },
-    {
-      // Gets a book based on the book_id given in the request parameters
-      tag_name: {
-        tag_id: req.params.tag_name,
-      },
-    }
-  )
-    .then((updatedTag) => {
-      res.json(updatedTag);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.json(err);
-    });
+  })
+  .then((updatedCategory) => {
+    res.json(updatedCategory);
+  })
+  .catch((err) => {
+    console.log(err);
+    res.json(err);
+  });
 });
 
 router.delete('/:id', async (req, res) => {

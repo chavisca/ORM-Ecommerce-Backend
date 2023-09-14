@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const sequelize = require('../../config/connection');
 const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // The `/api/products` endpoint
@@ -9,12 +10,14 @@ router.get('/', async (req, res) => {
   // be sure to include its associated Category and Tag data
   try {
     const prodData = await Product.findAll({
-      include: [{ model: Category}], 
-      include: [{ model: Tag}],
-      include: [{ model: ProductTag}],
+      include: [
+        { model: Category}, 
+        { model: Tag, through: ProductTag}
+      ],
     });
     res.status(200).json(prodData);
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
@@ -25,9 +28,10 @@ router.get('/:id', async (req, res) => {
   // be sure to include its associated Category and Tag data
   try {
     const prodData = await Product.findByPk(req.params.id, {
-      include: [{ model: Category }], 
-      include: [{ model: Tag }],
-      include: [{ model: ProductTag}],
+      include: [ 
+        { model: Category }, 
+        { model: Tag, through: ProductTag }
+      ],
     });
 
     if (!prodData) {
@@ -42,7 +46,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // create new product
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
   /* req.body should look like this...
     {
       product_name: "Basketball",
@@ -51,17 +55,6 @@ router.post('/', async (req, res) => {
       tagIds: [1, 2, 3, 4]
     }
   */
-    try {
-      const prodData = await Product.create({
-        product_name: req.body.product_name,
-        price: req.body.price,
-        stock: req.body.stock,
-        tagIds: req.body.tagId,
-      });
-      res.status(200).json(prodData);
-    } catch (err) {
-      res.status(400).json(err);
-    }
   Product.create(req.body)
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
